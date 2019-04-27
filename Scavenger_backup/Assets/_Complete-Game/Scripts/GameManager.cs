@@ -4,7 +4,8 @@ using System.Collections;
 
 namespace Completed
 {
-	using System.Collections.Generic;		//Allows us to use Lists. 
+    using System;
+    using System.Collections.Generic;		//Allows us to use Lists. 
 	using UnityEngine.UI;					//Allows us to use UI.
 	
 	public class GameManager : MonoBehaviour
@@ -177,10 +178,13 @@ namespace Completed
 			}
 			//Once Enemies are done moving, set playersTurn to true so player can move.
 			playersTurn = true;
-			
+            MoveTimeCounter.Instance.Reset();
 			//Enemies are done moving, set enemiesMoving to false.
 			enemiesMoving = false;
+     
 		}
-	}
+
+    }
+   
 }
 
