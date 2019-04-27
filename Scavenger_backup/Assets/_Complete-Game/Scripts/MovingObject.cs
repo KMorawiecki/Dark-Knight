@@ -50,29 +50,29 @@ namespace Completed
 			//Re-enable boxCollider after linecast
 			boxCollider.enabled = true;
 
-            if (xDir > start.x)
+            if (xDir == 1)
             {
                 if (currentTile.right)
                     hitWall = true;
             }
-            else if (xDir < start.x)
+            else if (xDir == -1)
             {
                 if (currentTile.left)
                     hitWall = true;
             }
-            else if (yDir > start.y)
+            else if (yDir == 1)
             {
                 if (currentTile.top)
                     hitWall = true;
             }
-            else if (yDir < start.y)
+            else if (yDir == -1)
             {
                 if (currentTile.bottom)
                     hitWall = true;
             }
 
             //Check if anything was hit
-            if (hit.transform == null)// && hitWall == false)
+            if (hit.transform == null && hitWall == false)
 			{
 				//If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
 				StartCoroutine (SmoothMovement (end));
