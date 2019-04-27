@@ -127,7 +127,7 @@ namespace Completed
             //put last wall randomly
             else if(rows == (int)(Math.Pow(2, threshold)))
             {
-                int lastWallPosition = Random.Range(0, 3);
+                int lastWallPosition = Random.Range(0, 4);
 
                 switch(lastWallPosition)
                 {
@@ -148,7 +148,7 @@ namespace Completed
                 return;
             }
 
-            int hole = Random.Range(start_ver, (int) (start_ver + (rows / Math.Pow(2, threshold - 1)) - 1));
+            int hole = Random.Range(start_ver, (int) (start_ver + rows / Math.Pow(2, threshold - 1)));
 
             //put vertical wall in the middle
             for (int i = start_ver; i < start_ver + rows / Math.Pow(2, threshold - 1); i++)
@@ -163,7 +163,7 @@ namespace Completed
             //if (columns < (int) (Math.Pow(2, threshold + 1)))
             //    return;
 
-            hole = Random.Range(start_hor, (int)(start_hor + columns / Math.Pow(2, threshold) - 1));
+            hole = Random.Range(start_hor, (int)(start_hor + columns / Math.Pow(2, threshold)));
             //put horizontal wall on the left
             for (int i = start_hor; i < start_hor + columns / Math.Pow(2, threshold); i++)
             {
@@ -177,7 +177,7 @@ namespace Completed
             PutWalls(threshold + 1, start_hor, start_ver);
             PutWalls(threshold + 1, start_hor, (int)(start_ver + rows / Math.Pow(2, threshold)));
 
-            hole = Random.Range((int)(start_hor + columns / Math.Pow(2, threshold)), (int)(start_hor + (columns / Math.Pow(2, threshold - 1)) -1));
+            hole = Random.Range((int)(start_hor + columns / Math.Pow(2, threshold)), (int)(start_hor + columns / Math.Pow(2, threshold - 1)));
             //put horizontal wall on the right
             for (int i = (int) (start_hor + columns / Math.Pow(2, threshold)); i < (int)(start_hor + columns / Math.Pow(2, threshold - 1)); i++)
             {
@@ -285,6 +285,11 @@ namespace Completed
             SimplifyMaze();
             UpdateTiles();
             LayoutFloor();
+
+            //Determine number of enemies based on current level number, based on a logarithmic progression
+            int enemyCount = (int)Mathf.Log(level, 2f) + 1;
+            //Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
+            LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
             //Instantiate the exit tile in the upper right hand corner of our game board
             Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
