@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 9f060536b59941c449c3eb8e4d9880e2
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - attackSound1: {instanceID: 0}
+  - attackSound2: {instanceID: 0}
+  - foodToken: {fileID: 110520, guid: ad25a4e752915438e9f55a35bedacf1f, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

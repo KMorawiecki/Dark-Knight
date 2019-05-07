@@ -9,10 +9,6 @@ namespace Completed
         // Start is called before the first frame update
         protected override void Start()
         {
-
-            //Find the Player GameObject using it's tag and store a reference to its transform component.
-            //target = GameObject.FindGameObjectWithTag("Player").transform;
-
             //Call the start function of our base class MovingObject.
             base.Start();
         }
@@ -49,14 +45,14 @@ namespace Completed
                 //zabezpieczenie przed skrajnymi
                 if (transform.position.x == 0 && xDir == -1)
                     continue;
-                else if (transform.position.x == GameManager.instance.GetBoard().columns - 1 && xDir == 1)
+                else if (transform.position.x == board.columns - 1 && xDir == 1)
                     continue;
                 else if (transform.position.y == 0 && yDir == -1)
                     continue;
-                else if (transform.position.y == GameManager.instance.GetBoard().rows - 1 && yDir == 1)
+                else if (transform.position.y == board.rows - 1 && yDir == 1)
                     continue;
 
-                Tile currentTile = GameManager.instance.GetBoard().GetTile((int) transform.position.x, (int) transform.position.y);
+                Tile currentTile = board.GetTile((int) transform.position.x, (int) transform.position.y);
 
                 //zabezpieczenie przed wejsciem w sciane
                 if (xDir == -1 && currentTile.left)
