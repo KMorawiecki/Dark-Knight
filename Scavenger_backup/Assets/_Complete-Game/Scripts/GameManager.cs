@@ -114,6 +114,8 @@ namespace Completed
 		//Update is called every frame.
 		void Update()
 		{
+            //add lighting after move
+            GetBoard().ColorBoard();
 			//Check that playersTurn or enemiesMoving or doingSetup are not currently true.
 			if(playersTurn || enemiesMoving || doingSetup)
 				
@@ -122,7 +124,7 @@ namespace Completed
 			
 			//Start moving enemies.
 			StartCoroutine (MoveEnemies ());
-		}
+        }
 		
 		//Call this to add the passed in Enemy to the List of Enemy objects.
 		public void AddEnemyToList(Enemy script)

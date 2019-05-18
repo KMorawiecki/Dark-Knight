@@ -15,6 +15,7 @@ namespace Completed
 		private bool skipMove;								//Boolean to determine whether or not enemy should skip a turn or move this turn.
 		protected Transform target;                         //Transform to attempt to move toward each turn.
         protected BoardManager board;
+        protected SpriteRenderer spriteRenderer;
 
         //Start overrides the virtual Start function of the base class.
         protected override void Start ()
@@ -24,16 +25,21 @@ namespace Completed
 			GameManager.instance.AddEnemyToList (this);
 
             board = GameManager.instance.GetBoard();
-			//Get and store a reference to the attached Animator component.
+
 			animator = GetComponent<Animator> ();
+            spriteRenderer = GetComponent<SpriteRenderer>();
 
             base.Start();
 		}
-		
-		
-		//Override the AttemptMove function of MovingObject to include functionality needed for Enemy to skip turns.
-		//See comments in MovingObject for more on how base AttemptMove function works.
-		protected override void AttemptMove <T> (int xDir, int yDir)
+
+        protected void Update()
+        {
+            spriteRenderer.color = board.GetTile((int)transform.position.x, (int)transform.position.y).GetColor();
+        }
+
+        //Override the AttemptMove function of MovingObject to include functionality needed for Enemy to skip turns.
+        //See comments in MovingObject for more on how base AttemptMove function works.
+        protected override void AttemptMove <T> (int xDir, int yDir)
 		{
 			//Check if skipMove is true, if so set it to false and skip this turn.
 			if(skipMove)
@@ -45,9 +51,6 @@ namespace Completed
 			
 			//Call the AttemptMove function from MovingObject.
 			base.AttemptMove <T> (xDir, yDir);
-			
-			//Now that Enemy has moved, set skipMove to true to skip next move.
-			//skipMove = true;
 		}
 
 

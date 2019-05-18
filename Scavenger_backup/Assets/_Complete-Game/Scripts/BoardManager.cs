@@ -295,6 +295,57 @@ namespace Completed
             Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
 		}
 
+        //adds lighting each step
+        public void ColorBoard()
+        {
+            Transform playerPos = GameObject.FindGameObjectWithTag("Player").transform;
+
+            //first we color everything black
+            for (int row = 0; row < tiles.Count; row++)
+                for (int col = 0; col < tiles[row].Count; col++)
+                   tiles[row][col].SetColor(Color.black);
+
+            //next we add lighting recursively
+            AddLighting(0, (int)playerPos.position.x, (int)playerPos.position.y);
+
+            //color exit 
+            exit.GetComponent<SpriteRenderer>().color = GetTile((int)exit.transform.position.x, (int)exit.transform.position.y).GetColor();
+        }
+
+        private void AddLighting(int thresh, int tilePosX, int tilePosY)
+        {
+            if (thresh >= 3)
+                return;
+
+            switch(thresh)
+            {
+                case 0:
+                    if(tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                        tiles[tilePosX][tilePosY].SetColor(Color.white);
+                    break;
+                case 1:
+                    if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                        tiles[tilePosX][tilePosY].SetColor(Color.white);
+                    break;
+                case 2:
+                    if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                        tiles[tilePosX][tilePosY].SetColor(Color.grey);
+                    break;
+                default:
+                    tiles[tilePosX][tilePosY].SetColor(Color.black);
+                    break;
+            }
+
+            if (tilePosX != 0 && tiles[tilePosX][tilePosY].left != true)
+                AddLighting(thresh + 1, tilePosX - 1, tilePosY);
+            if (tilePosX != columns - 1 && tiles[tilePosX][tilePosY].right != true)
+                AddLighting(thresh + 1, tilePosX + 1, tilePosY);
+            if (tilePosY != 0 && tiles[tilePosX][tilePosY].bottom != true)
+                AddLighting(thresh + 1, tilePosX, tilePosY - 1);
+            if (tilePosY != rows -1 && tiles[tilePosX][tilePosY].top != true)
+                AddLighting(thresh + 1, tilePosX, tilePosY + 1);
+        }
+
         public Transform GetBoardHolder()
         {
             return boardHolder;
