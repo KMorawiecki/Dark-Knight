@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class RegisterManager : MonoBehaviour
@@ -11,6 +12,8 @@ public class RegisterManager : MonoBehaviour
     public GameObject Password;
     public GameObject ConfPassword;
     public GameObject RegisterButton;
+    public GameObject InfoTextbox;
+
     private string _username;
     private string _password;
     private string _confPassword;
@@ -56,6 +59,7 @@ public class RegisterManager : MonoBehaviour
     {
         if (Application.internetReachability == NetworkReachability.NotReachable)
         {
+            InfoTextbox.GetComponent<Text>().text = "Check internet connection!";
             print("Error. Check internet connection!");
         }
         else
@@ -67,31 +71,62 @@ public class RegisterManager : MonoBehaviour
         bool createdUser = false;
 
         if (string.IsNullOrEmpty(_username))
+        {
+            InfoTextbox.GetComponent<Text>().text = "Username is empty";
             print("username empty");
+            return;
+        }
+
         if (string.IsNullOrEmpty(_password))
-            print("password empty");
-        else if(string.IsNullOrEmpty(_confPassword))
-                print("confpass empty");
+        {
+            InfoTextbox.GetComponent<Text>().text = "Password is empty.";
+            print("confpass empty");
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_confPassword))
+        {
+            InfoTextbox.GetComponent<Text>().text = "Password confirmation is empty.";
+            print("confpass empty");
+            return;
+        }
+
         if (_password.Equals(_confPassword))
-            existsUser = await ServerConnector.CheckIfUserExists(_username);
-        else print("pass and cond pass dont match");
+        {
+            InfoTextbox.GetComponent<Text>().text = "Connecting to server...";
+            existsUser = await ServerConnector.CheckIfUserExists(_username);           
+        }
+        else
+        {
+            InfoTextbox.GetComponent<Text>().text = "Passwords do not match.";
+            print("pass and cond pass dont match");
+            return;
+        }
 
         if (!existsUser)
         {
+            InfoTextbox.GetComponent<Text>().text = "Connecting to server...";
             createdUser = await ServerConnector.CreateUser(_username, _password);
             if (createdUser)
             {
+                InfoTextbox.GetComponent<Text>().text = "User created.";
                 print("user created");
-                Username.GetComponent<InputField>().text = "";
-                Password.GetComponent<InputField>().text = "";
-                ConfPassword.GetComponent<InputField>().text = "";
+                //  Username.GetComponent<InputField>().text = "";
+                //  Password.GetComponent<InputField>().text = "";
+                //  ConfPassword.GetComponent<InputField>().text = "";
             }
-               
-        }
-        else print("exists user and cannot be created");
 
+        }
+        else
+        {
+            InfoTextbox.GetComponent<Text>().text = "User cannot be created.";
+            print("exists user and cannot be created");
+        }
 
     }
 
-
+    public void GoToWelcomeScene()
+    {
+        SceneManager.LoadScene("WelcomeScene", LoadSceneMode.Single);
+    }
 }
