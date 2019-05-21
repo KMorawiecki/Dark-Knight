@@ -19,15 +19,15 @@ namespace Completed
 		private Text levelText;									//Text to display current level number.
 		private GameObject levelImage;							//Image to block out level as levels are being set up, background for levelText.
 		private BoardManager boardScript;						//Store a reference to our BoardManager which will set up the level.
-		private int level = 0;									//Current level number, expressed in game as "Day 1".
+		private int level = 1;									//Current level number, expressed in game as "Day 1".
 		private List<Enemy> enemies;							//List of all Enemy units, used to issue them move commands.
 		private bool enemiesMoving;								//Boolean to check if enemies are moving.
-		private bool doingSetup = true;							//Boolean to check if we're setting up board, prevent Player from moving during setup.
-		
-		
-		
-		//Awake is always called before any Start functions
-		void Awake()
+		private bool doingSetup = true;                         //Boolean to check if we're setting up board, prevent Player from moving during setup.
+        public bool IsPlaying { get; set; } = false;
+
+
+        //Awake is always called before any Start functions
+        void Awake()
 		{
             //Check if instance already exists
             if (instance == null)
@@ -52,6 +52,7 @@ namespace Completed
 			
 			//Call the InitGame function to initialize the first level 
 			InitGame();
+            
 		}
 
         //this is called only once, and the paramter tell it to be called only after the scene was loaded
@@ -66,8 +67,12 @@ namespace Completed
         //This is called each time a scene is loaded.
         static private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
         {
-            instance.level++;
-            instance.InitGame();
+            if (arg0.name.Equals("Final_Game") && instance.IsPlaying)
+            {
+                instance.level++;
+                instance.InitGame();
+            }
+
         }
 
 		
@@ -114,6 +119,10 @@ namespace Completed
 		//Update is called every frame.
 		void Update()
 		{
+            if (Input.GetKeyDown(KeyCode.Delete))
+            {
+                GameManager.instance.GameOver();
+            }
             //add lighting after move
             GetBoard().ColorBoard();
 			//Check that playersTurn or enemiesMoving or doingSetup are not currently true.
@@ -124,6 +133,7 @@ namespace Completed
 			
 			//Start moving enemies.
 			StartCoroutine (MoveEnemies ());
+
         }
 		
 		//Call this to add the passed in Enemy to the List of Enemy objects.
@@ -137,15 +147,23 @@ namespace Completed
 		//GameOver is called when the player reaches 0 food points
 		public void GameOver()
 		{
-			//Set levelText to display number of levels passed and game over message
-			levelText.text = "After " + level + " days, you starved.";
-			
-			//Enable black background image gameObject.
-			levelImage.SetActive(true);
-			
-			//Disable this GameManager.
-			enabled = false;
-		}
+            //Stop the background music.
+            SoundManager.instance.musicSource.Stop();
+
+            //Set levelText to display number of levels passed and game over message
+            //levelText.text = "After " + level + " days, you starved.";
+
+            //Enable black background image gameObject.
+            //levelImage.SetActive(true);
+
+            //Disable this GameManager.
+            enabled = false;
+
+            GameManager.instance.IsPlaying = false;
+            PlayerInfo.Instance.EndOfGame(level);
+            SceneManager.LoadScene("GameOverScene", LoadSceneMode.Single);
+
+        }
 
         public BoardManager GetBoard()
         {

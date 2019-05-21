@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using Completed;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,17 +8,18 @@ public class PlayerInfo
 {
     private static readonly PlayerInfo instance = new PlayerInfo();
     public static string PlayerName { get;  private set; }
-    public static bool CurrentlyPlaying { get; private set; }
-    public static float GameTime { get; private set; }
+    public static int GameTime { get; private set; }
     public static int Level { get; private set; }
-
     private static float  gameStartTime;
+    private static bool gameStarted=false;
+    private static bool gameFinished=false;
 
     static PlayerInfo()
     {
-        CurrentlyPlaying = false;
         PlayerName = "none";
         GameTime = 0;
+        gameStarted = false;
+
     }
     public static PlayerInfo Instance
     {
@@ -26,11 +29,12 @@ public class PlayerInfo
         }
     }
 
-    public void StartGameTime(string name)
+    public void StartGameCounter(string name)
     {
+        Reset();
         PlayerName = name;
         gameStartTime = Time.time;
-        CurrentlyPlaying = true;
+        gameStarted = true;
     }
 
     public float GameCurrentTime()
@@ -40,8 +44,22 @@ public class PlayerInfo
 
     public void EndOfGame(int level)
     {
-        GameTime = GameCurrentTime();
-        CurrentlyPlaying = false;
+        GameTime = (int)Math.Floor(GameCurrentTime());
         Level = level;
+        gameFinished = true;
+       
+    }
+    public void Reset()
+    {
+        PlayerName = "none";
+        GameTime = 0;
+        gameStarted = false;
+        gameFinished = false;
+    }
+    public bool GameSuccesfullyFinished()
+    {
+        if (gameStarted && gameFinished)
+            return true;
+        else return false;
     }
 }

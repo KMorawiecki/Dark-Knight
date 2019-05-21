@@ -72,6 +72,7 @@
     <Compile Include="Assets\_Complete-Game\Scripts\Player.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\PlayerDTO.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\PlayerInfo.cs" />
+    <Compile Include="Assets\_Complete-Game\Scripts\RankingScene.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\Rat.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\RegisterManager.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\ServerConnector.cs" />

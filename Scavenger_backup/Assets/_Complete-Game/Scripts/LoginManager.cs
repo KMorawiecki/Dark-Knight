@@ -79,7 +79,7 @@ public class LoginManager : MonoBehaviour
         if (userLoggedIn)
         {
             print("user logged");
-
+            PlayerInfo.Instance.StartGameCounter(_username);
             SceneManager.LoadScene("Final_Game", LoadSceneMode.Single);
 
         }

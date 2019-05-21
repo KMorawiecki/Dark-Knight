@@ -26,6 +26,8 @@ public class WelcomeScreen : MonoBehaviour
 
     public void PlayOffline()
     {
+
+        PlayerInfo.Instance.StartGameCounter("anonymous");
         SceneManager.LoadScene("Final_Game", LoadSceneMode.Single);
 
     }

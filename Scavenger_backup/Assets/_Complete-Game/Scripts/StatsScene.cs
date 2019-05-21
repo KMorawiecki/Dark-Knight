@@ -63,18 +63,18 @@ public class StatsScene : MonoBehaviour
 
     public void OnDownloadButton()
     {
-        //InfoLabel.GetComponent<Text>().text = "Connecting to server...";
+        InfoLabel.GetComponent<Text>().text = "Connecting to server...";
 
 
-        //var rankingByLevel = ServerConnector.GetPlayerByName("admin").Result;
+        var rankingByLevel =   ServerConnector.GetPlayersByLevel().Result;
 
-        //if (rankingByLevel!=null)
-        //{
-        //    InfoLabel.GetComponent<Text>().text = " elements";
+        if (rankingByLevel != null)
+        {
+            InfoLabel.GetComponent<Text>().text = " elements";
 
-        //}
-        //else
-        //    InfoLabel.GetComponent<Text>().text = " no no no";
+        }
+        else
+            InfoLabel.GetComponent<Text>().text = " no no no";
 
     }
 }

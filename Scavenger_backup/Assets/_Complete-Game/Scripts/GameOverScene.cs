@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +17,20 @@ public class GameOverScene : MonoBehaviour
         else
             LevelTextBox.GetComponent<Text>().text = PlayerInfo.PlayerName+", after " + PlayerInfo.Level + " days, you starved.";
 
-        TimeTextBox.GetComponent<Text>().text = "Play time: " + PlayerInfo.GameTime;
+        if (PlayerInfo.GameTime < 60)
+        {
+            TimeTextBox.GetComponent<Text>().text = "Play time: " + PlayerInfo.GameTime + " sec." ;
+        }
+        else
+        {
+            var minutes = Math.Floor((double)PlayerInfo.GameTime/60);
+            var seconds = (PlayerInfo.GameTime) % 60;
+            TimeTextBox.GetComponent<Text>().text = "Play time: " +minutes+" min "+ seconds + "sec.";
+            print(PlayerInfo.GameTime);
+
+        }
+        if (!PlayerInfo.PlayerName.Equals("anonymous"))
+            SendGameInfo();
 
     }
 
@@ -27,7 +41,6 @@ public class GameOverScene : MonoBehaviour
     }
     public void OnMainMenuClick()
     {
-
         SceneManager.LoadScene("WelcomeScene", LoadSceneMode.Single);
     }
     public void OnStatsClick()
@@ -40,4 +53,21 @@ public class GameOverScene : MonoBehaviour
         SceneManager.LoadScene("Final_Game", LoadSceneMode.Single);
        
     }
+
+    void SendGameInfo()
+    {
+        GameInfoDTO gameInfo = new GameInfoDTO()
+        {
+            Name = PlayerInfo.PlayerName,
+            GameTime = PlayerInfo.GameTime,
+            Level = PlayerInfo.Level,
+        };
+        var call = ServerConnector.UpdateAfterGame(gameInfo);
+
+        if (call.IsCanceled)
+        {
+            print("ok");
+        }
+    }
+
 }
