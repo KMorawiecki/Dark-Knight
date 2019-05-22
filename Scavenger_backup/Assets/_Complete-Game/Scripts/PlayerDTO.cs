@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerDTO : MonoBehaviour
+public class PlayerDTO 
 {
    
         public string Id { get; set; }

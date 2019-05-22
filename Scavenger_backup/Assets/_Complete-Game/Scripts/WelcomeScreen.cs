@@ -42,6 +42,11 @@ public class WelcomeScreen : MonoBehaviour
         SceneManager.LoadScene("RegisterScene", LoadSceneMode.Single);
     }
 
+    public void GoToRanking()
+    {
+        SceneManager.LoadScene("StatsScene", LoadSceneMode.Single);
+
+    }
     public void ExitGame()
     {
         Application.Quit();

@@ -34,31 +34,31 @@ public sealed class ServerConnector
         }
         public static async Task<List<PlayerDTO>> GetPlayers()
         {
-            List<PlayerDTO> players = null;
+            List<PlayerDTO> players = new List<PlayerDTO>();
             HttpResponseMessage response = await client.GetAsync("players");
             if (response.IsSuccessStatusCode)
             {
-                players = await response.Content.ReadAsAsync<List<PlayerDTO>>();
+                players =  response.Content.ReadAsAsync<List<PlayerDTO>>().Result;
             }
             return players;
         }
         public static async Task<List<PlayerDTO>> GetPlayersByLevel()
         {
-            List<PlayerDTO> players = null;
+            List<PlayerDTO> players = new List<PlayerDTO>();
             HttpResponseMessage response = await client.GetAsync("players/rankingByLevel");
             if (response.IsSuccessStatusCode)
             {
-                players = await response.Content.ReadAsAsync<List<PlayerDTO>>();
+                players =  response.Content.ReadAsAsync<List<PlayerDTO>>().Result;
             }
             return players;
         }
         public static async Task<List<PlayerDTO>> GetPlayersByTime()
         {
-            List<PlayerDTO> players = null;
+            List<PlayerDTO> players = new List<PlayerDTO>();
             HttpResponseMessage response = await client.GetAsync("players/rankingByTime");
             if (response.IsSuccessStatusCode)
             {
-                players = await response.Content.ReadAsAsync<List<PlayerDTO>>();
+                return await response.Content.ReadAsAsync<List<PlayerDTO>>();
             }
             return players;
         }

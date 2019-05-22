@@ -45,12 +45,17 @@ public class GameOverScene : MonoBehaviour
     }
     public void OnStatsClick()
     {
+        SceneManager.LoadScene("StatsScene", LoadSceneMode.Single);
 
     }
 
     public void OnPlayAgainClick()
     {
-        SceneManager.LoadScene("Final_Game", LoadSceneMode.Single);
+        //problem with implementation!!!
+
+        //PlayerInfo.Instance.Reset();
+        //SceneManager.LoadScene("Final_Game", LoadSceneMode.Single);
+        //Application.LoadLevel(0);
        
     }
 
@@ -63,11 +68,6 @@ public class GameOverScene : MonoBehaviour
             Level = PlayerInfo.Level,
         };
         var call = ServerConnector.UpdateAfterGame(gameInfo);
-
-        if (call.IsCanceled)
-        {
-            print("ok");
-        }
     }
 
 }

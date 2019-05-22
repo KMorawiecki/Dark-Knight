@@ -35,9 +35,11 @@ public class StatsScene : MonoBehaviour
     //List<PlayerDTO> adminIslogged;
 
     // Start is called before the first frame update
-     void Start()
+      void  Start()
     {
 
+        StartCoroutine("LoadPlayTimeChart");
+        StartCoroutine("LoadLevelChart");
 
     }
 
@@ -58,23 +60,89 @@ public class StatsScene : MonoBehaviour
     public void OnMainMenuButton()
     {
         SceneManager.LoadScene("WelcomeScene", LoadSceneMode.Single);
-
     }
 
     public void OnDownloadButton()
     {
-        InfoLabel.GetComponent<Text>().text = "Connecting to server...";
 
 
-        var rankingByLevel =   ServerConnector.GetPlayersByLevel().Result;
 
-        if (rankingByLevel != null)
+
+    }
+
+    public async Task LoadLevelChart()
+    {
+        var task = Task.Run(() => ServerConnector.GetPlayersByLevel());
+        task.Wait();
+        var playersLevel = task.Result;
+
+        if (playersLevel.Count > 0)
         {
-            InfoLabel.GetComponent<Text>().text = " elements";
+            Day1.GetComponent<Text>().text = playersLevel[0].Name;
+            Day1Val.GetComponent<Text>().text = playersLevel[0].MaxLevel.ToString();
 
+            if (playersLevel.Count > 1)
+            {
+                Day2.GetComponent<Text>().text = playersLevel[1].Name;
+                Day2Val.GetComponent<Text>().text = playersLevel[1].MaxLevel.ToString();
+
+                if (playersLevel.Count > 2)
+                {
+                    Day3.GetComponent<Text>().text = playersLevel[2].Name;
+                    Day3Val.GetComponent<Text>().text = playersLevel[2].MaxLevel.ToString();
+
+                    if (playersLevel.Count > 3)
+                    {
+                        Day4.GetComponent<Text>().text = playersLevel[3].Name;
+                        Day4Val.GetComponent<Text>().text = playersLevel[3].MaxLevel.ToString();
+
+                        if (playersLevel.Count > 4)
+                        {
+                            Day5.GetComponent<Text>().text = playersLevel[4].Name;
+                            Day5Val.GetComponent<Text>().text = playersLevel[4].MaxLevel.ToString();
+                        }
+
+                    }
+                }
+            }
         }
-        else
-            InfoLabel.GetComponent<Text>().text = " no no no";
+    }
 
+    public async Task LoadPlayTimeChart()
+    {
+        var task = Task.Run(() => ServerConnector.GetPlayersByTime());
+        task.Wait();
+        var playersTime = task.Result;
+
+        if(playersTime.Count > 0)
+        {
+            Time1.GetComponent<Text>().text = playersTime[0].Name;
+            Time1Val.GetComponent<Text>().text = playersTime[0].TotalTime.ToString();
+
+            if (playersTime.Count > 1)
+            {
+                Time2.GetComponent<Text>().text = playersTime[1].Name;
+                Time2Val.GetComponent<Text>().text = playersTime[1].TotalTime.ToString();
+
+                if (playersTime.Count > 2)
+                {
+                    Time3.GetComponent<Text>().text = playersTime[2].Name;
+                    Time3Val.GetComponent<Text>().text = playersTime[2].TotalTime.ToString();
+
+                    if (playersTime.Count > 3)
+                    {
+                        Time4.GetComponent<Text>().text = playersTime[3].Name;
+                        Time4Val.GetComponent<Text>().text = playersTime[3].TotalTime.ToString();
+
+                        if (playersTime.Count > 4)
+                        {
+                            Time5.GetComponent<Text>().text = playersTime[4].Name;
+                            Time5Val.GetComponent<Text>().text = playersTime[4].TotalTime.ToString();
+
+                        }
+                    }
+                }
+            }
+        }
     }
 }

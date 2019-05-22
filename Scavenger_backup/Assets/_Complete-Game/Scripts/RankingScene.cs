@@ -12,13 +12,13 @@ public class RankingScene : MonoBehaviour
        // InfoLabel.GetComponent<Text>().text = "Connecting to server...";
 
 
-        //var rankingByLevel = ServerConnector.GetPlayersByLevel().Result;
+        var rankingByLevel =  ServerConnector.GetPlayersByLevel().Result;
 
-        //if (rankingByLevel != null)
-        //{
+        if (rankingByLevel.Count>0)
+        {
             InfoLabel.GetComponent<Text>().text = " elements";
 
-    //    }
+        }
     //    else
     //        InfoLabel.GetComponent<Text>().text = " no no no";
     }
