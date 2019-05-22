@@ -39,7 +39,7 @@ namespace Completed
 			
 			//Set the foodText to reflect the current player food total.
 			foodText.text = "Food: " + food;
-			
+            GameManager.instance.IsPlaying = true;
 			//Call the Start function of the MovingObject base class.
 			base.Start ();
 		}
@@ -210,8 +210,8 @@ namespace Completed
 				//Call the PlaySingle function of SoundManager and pass it the gameOverSound as the audio clip to play.
 				SoundManager.instance.PlaySingle (gameOverSound);
 				
-				//Stop the background music.
-				SoundManager.instance.musicSource.Stop();
+				////Stop the background music.
+				//SoundManager.instance.musicSource.Stop();
 				
 				//Call the GameOver function of GameManager.
 				GameManager.instance.GameOver ();
