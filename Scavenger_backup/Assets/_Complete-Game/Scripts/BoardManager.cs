@@ -50,11 +50,13 @@ namespace Completed
 		public GameObject[] wallTiles;									//Array of wall prefabs.
 		public GameObject[] foodTiles;									//Array of food prefabs.
 		public GameObject[] enemyTiles;									//Array of enemy prefabs.
-		public GameObject[] outerWallTiles;								//Array of outer tile prefabs.
-		
+		public GameObject[] outerWallTiles;                             //Array of outer tile prefabs.
+
+        private Dictionary<Tuple<int, int>, GameObject> outerWallList = new Dictionary<Tuple<int, int>, GameObject>();
 		private Transform boardHolder;									//A variable to store a reference to the transform of our Board object.
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
         public List<List<Tile>> tiles = new List<List<Tile>>();
+        private GameObject exitInstance;                                //for sprite renderer reasons
 
 
         //Clears our list gridPositions and prepares it to generate a new board.
@@ -85,16 +87,22 @@ namespace Completed
             //clear list of all tiles from previous level
             tiles.Clear();
 
+            //clear list of outer walls
+            outerWallList.Clear();
+
             for (int x = -1; x < columns + 1; x++)
             {
                 List<Tile> newRow = new List<Tile>();
                 tiles.Add(newRow);
+
+                //int iter = 0; //to hold array of outer wall instances
 
                 for (int y = -1; y < rows + 1; y++)
                 {
                     //Check if we current position is at board edge, if so choose a random outer wall prefab from our array of outer wall tiles.
                     if (x == -1 || x == columns || y == -1 || y == rows)
                     {
+                        //iter++;
                         GameObject toInstantiate = outerWallTiles[Random.Range(0, outerWallTiles.Length)];
 
                         //Instantiate the GameObject instance using the prefab chosen for toInstantiate at the Vector3 corresponding to current grid position in loop, cast it to GameObject.
@@ -103,6 +111,13 @@ namespace Completed
 
                         //Set the parent of our newly instantiated object instance to boardHolder, this is just organizational to avoid cluttering hierarchy.
                         instance.transform.SetParent(boardHolder);
+
+                        //color it black
+                        instance.GetComponent<SpriteRenderer>().color = Color.black;
+
+                        //add to list
+                        Tuple<int, int> newKey = new Tuple<int, int>(x,y);
+                        outerWallList.Add(newKey, instance);
                     }
                     else
                     {
@@ -159,9 +174,6 @@ namespace Completed
                 else
                     tiles[(int)(start_hor + columns / Math.Pow(2, threshold) - 1)][i].right = false;
             }
-
-            //if (columns < (int) (Math.Pow(2, threshold + 1)))
-            //    return;
 
             hole = Random.Range(start_hor, (int)(start_hor + columns / Math.Pow(2, threshold)));
             //put horizontal wall on the left
@@ -292,7 +304,7 @@ namespace Completed
             LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
             //Instantiate the exit tile in the upper right hand corner of our game board
-            Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
+            exitInstance = Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
 		}
 
         //adds lighting each step
@@ -309,7 +321,25 @@ namespace Completed
             AddLighting(0, (int)playerPos.position.x, (int)playerPos.position.y);
 
             //color exit 
-            exit.GetComponent<SpriteRenderer>().color = GetTile((int)exit.transform.position.x, (int)exit.transform.position.y).GetColor();
+            exitInstance.GetComponent<SpriteRenderer>().color = GetTile(columns - 1, rows - 1).GetColor();
+
+            //color outer walls
+            for(int row = 0; row < rows; row++)
+            {
+                Tuple<int, int> newKeyTop = new Tuple<int, int>(row, columns);
+                outerWallList[newKeyTop].GetComponent<SpriteRenderer>().color = GetTile(row, columns - 1).GetColor();
+
+                Tuple<int, int> newKeyBot = new Tuple<int, int>(row, -1);
+                outerWallList[newKeyBot].GetComponent<SpriteRenderer>().color = GetTile(row, 0).GetColor();
+            }
+            for (int col = 0; col < columns; col++)
+            {
+                Tuple<int, int> newKeyLeft = new Tuple<int, int>(rows, col);
+                outerWallList[newKeyLeft].GetComponent<SpriteRenderer>().color = GetTile(rows - 1, col).GetColor();
+
+                Tuple<int, int> newKeyRight = new Tuple<int, int>(-1, col);
+                outerWallList[newKeyRight].GetComponent<SpriteRenderer>().color = GetTile(0, col).GetColor();
+            }
         }
 
         private void AddLighting(int thresh, int tilePosX, int tilePosY)
