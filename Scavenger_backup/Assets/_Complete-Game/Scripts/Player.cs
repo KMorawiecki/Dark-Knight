@@ -33,9 +33,10 @@ namespace Completed
 		{
 			//Get a component reference to the Player's animator component
 			animator = GetComponent<Animator>();
-			
-			//Get the current food point total stored in GameManager.instance between levels.
-			food = GameManager.instance.playerFoodPoints;
+            //animator.SetTrigger("knightIdle");
+
+            //Get the current food point total stored in GameManager.instance between levels.
+            food = GameManager.instance.playerFoodPoints;
 			
 			//Set the foodText to reflect the current player food total.
 			foodText.text = "Food: " + food;
@@ -96,10 +97,13 @@ namespace Completed
 			
 			//Hit allows us to reference the result of the Linecast done in Move.
 			RaycastHit2D hit;
-			
-			//If Move returns true, meaning Player was able to move into an empty space.
-			if (Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y))) 
+
+           
+            //If Move returns true, meaning Player was able to move into an empty space.
+            if (Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y))) 
 			{
+                animator.SetTrigger("knightWalk");
+
 				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
 				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
 
@@ -107,14 +111,15 @@ namespace Completed
                 GameManager.instance.playersTurn = false;
             }
 
+            animator.SetTrigger("knightIdle");
+
             //Since the player has moved and lost food points, check if the game has ended.
             CheckIfGameOver();
 		}
-		
-		
-		//OnCantMove overrides the abstract function OnCantMove in MovingObject.
-		//It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
-		protected override void OnCantMove <T> (T component)
+
+        //OnCantMove overrides the abstract function OnCantMove in MovingObject.
+        //It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
+        protected override void OnCantMove <T> (T component)
 		{
 			//Set hitWall to equal the component passed in as a parameter.
 			Wall hitWall = component as Wall;
