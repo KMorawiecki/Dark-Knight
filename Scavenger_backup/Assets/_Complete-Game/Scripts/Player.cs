@@ -23,6 +23,7 @@ namespace Completed
 		
 		private Animator animator;					//Used to store a reference to the Player's animator component.
 		private int food;                           //Used to store player food points total during level.
+        private bool turnedRight;
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         private Vector2 touchOrigin = -Vector2.one;	//Used to store location of screen touch origin for mobile controls.
 #endif
@@ -37,6 +38,8 @@ namespace Completed
 
             //Get the current food point total stored in GameManager.instance between levels.
             food = GameManager.instance.playerFoodPoints;
+
+            turnedRight = true;
 			
 			//Set the foodText to reflect the current player food total.
 			foodText.text = "Food: " + food;
@@ -78,6 +81,10 @@ namespace Completed
 			//Check if we have a non-zero value for horizontal or vertical
 			if(horizontal != 0 || vertical != 0)
 			{
+                if (horizontal == 1)
+                    turnedRight = true;
+                else if (horizontal == -1)
+                    turnedRight = false;
 				//Call AttemptMove passing in the generic parameter Wall, since that is what Player may interact with if they encounter one (by attacking it)
 				//Pass in horizontal and vertical as parameters to specify the direction to move Player in.
 				AttemptMove<Wall> (horizontal, vertical);
@@ -102,16 +109,21 @@ namespace Completed
             //If Move returns true, meaning Player was able to move into an empty space.
             if (Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y))) 
 			{
-                animator.SetTrigger("knightWalk");
-
-				//Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
-				SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
+                if(turnedRight)
+                    animator.SetTrigger("knightWalkRight");
+                else
+                    animator.SetTrigger("knightWalkLeft");
+                //Call RandomizeSfx of SoundManager to play the move sound, passing in two audio clips to choose from.
+                SoundManager.instance.RandomizeSfx (moveSound1, moveSound2);
 
                 //Set the playersTurn boolean of GameManager to false now that players turn is over.
                 GameManager.instance.playersTurn = false;
             }
 
-            animator.SetTrigger("knightIdle");
+            if (turnedRight)
+                animator.SetTrigger("knightIdleRight");
+            else
+                animator.SetTrigger("knightIdleLeft");
 
             //Since the player has moved and lost food points, check if the game has ended.
             CheckIfGameOver();
