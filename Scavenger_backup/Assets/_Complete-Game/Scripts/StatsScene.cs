@@ -37,6 +37,7 @@ public class StatsScene : MonoBehaviour
     // Start is called before the first frame update
       void  Start()
     {
+        InfoLabel.GetComponent<Text>().text = "Downloading data from server...";
 
         StartCoroutine("LoadPlayTimeChart");
         StartCoroutine("LoadLevelChart");
@@ -72,9 +73,8 @@ public class StatsScene : MonoBehaviour
 
     public async Task LoadLevelChart()
     {
-        var task = Task.Run(() => ServerConnector.GetPlayersByLevel());
-        task.Wait();
-        var playersLevel = task.Result;
+        var task = await Task.Run(() => ServerConnector.GetPlayersByLevel());
+        var playersLevel = task;
 
         if (playersLevel.Count > 0)
         {
@@ -106,13 +106,14 @@ public class StatsScene : MonoBehaviour
                 }
             }
         }
+        InfoLabel.GetComponent<Text>().text = string.Empty;
+
     }
 
     public async Task LoadPlayTimeChart()
     {
-        var task = Task.Run(() => ServerConnector.GetPlayersByTime());
-        task.Wait();
-        var playersTime = task.Result;
+        var task = await Task.Run(() => ServerConnector.GetPlayersByTime());
+        var playersTime = task;
 
         if(playersTime.Count > 0)
         {
@@ -144,5 +145,7 @@ public class StatsScene : MonoBehaviour
                 }
             }
         }
+        InfoLabel.GetComponent<Text>().text = string.Empty;
+
     }
 }
