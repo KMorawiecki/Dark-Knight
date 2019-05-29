@@ -23,9 +23,7 @@ namespace Completed
 			//Register this enemy with our instance of GameManager by adding it to a list of Enemy objects. 
 			//This allows the GameManager to issue movement commands.
 			GameManager.instance.AddEnemyToList (this);
-
             board = GameManager.instance.GetBoard();
-
 			animator = GetComponent<Animator> ();
             spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -74,5 +72,14 @@ namespace Completed
 			//Call the RandomizeSfx function of SoundManager passing in the two audio clips to choose randomly between.
 			SoundManager.instance.RandomizeSfx (attackSound1, attackSound2);
 		}
-	}
+
+        protected override void OnTakeOverPosition<T>(T component)
+        {
+            Player player = component as Player;
+            GameManager.instance.SetEnemyToRemove(this);
+            player.LoseFood(playerDamage);
+            SoundManager.instance.RandomizeSfx(attackSound1, attackSound2);
+            
+        }
+    }
 }

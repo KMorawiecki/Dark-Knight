@@ -31,8 +31,9 @@ namespace Completed
 		
 		//Move returns true if it is able to move and false if not. 
 		//Move takes parameters for x direction, y direction and a RaycastHit2D to check collision.
-		protected bool Move (int xDir, int yDir, out RaycastHit2D hit, Tile currentTile)
+		protected bool Move (int xDir, int yDir, out RaycastHit2D hit, Tile currentTile, out bool takeOverPosition)
 		{
+            takeOverPosition = false;
 			//Store start position to move from, based on objects current transform position.
 			Vector2 start = transform.position;
 			
@@ -40,6 +41,12 @@ namespace Completed
 			Vector2 end = start + new Vector2 (xDir, yDir);
 
             bool hitWall = false;
+
+            var potentiallOcupiedField = Physics2D.OverlapCircle(end, 0.5f, blockingLayer);
+            //if ( potentiallOcupiedField!=null && potentiallOcupiedField.gameObject!=null) 
+            //{
+            //    print("!!!!!!!"+ potentiallOcupiedField.gameObject.transform.position.x +","+ potentiallOcupiedField.gameObject.transform.position.y);
+            //}
 			
 			//Disable the boxCollider so that linecast doesn't hit this object's own collider.
 			boxCollider.enabled = false;
@@ -71,7 +78,7 @@ namespace Completed
                     hitWall = true;
             }
 
-            //Check if anything was hit
+
             if (hit.transform == null && hitWall == false)
 			{
 				//If nothing was hit, start SmoothMovement co-routine passing in the Vector2 end as destination
@@ -79,15 +86,26 @@ namespace Completed
 				
 				//Return true to say that Move was successful
 				return true;
-			}
-			
+            }
+            else if(hit.transform!=null)
+            {
+                var firstObjectTag = hit.transform.gameObject.tag;
+                var secondObjectTag = this.transform.gameObject.tag;
+                if((firstObjectTag.Equals("Enemy") && secondObjectTag.Equals("Player")) || (firstObjectTag.Equals("Player") && secondObjectTag.Equals("Enemy")))
+                {
+                    takeOverPosition = true;
+                    StartCoroutine(SmoothMovement(end));
+                    return true;
+                }
+
+            }
 			//If something was hit, return false, Move was unsuccesful.
 			return false;
 		}
-		
-		
-		//Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
-		protected IEnumerator SmoothMovement (Vector3 end)
+
+      
+        //Co-routine for moving units from one space to next, takes a parameter end to specify where to move to.
+        protected IEnumerator SmoothMovement (Vector3 end)
 		{
 			//Calculate the remaining distance to move based on the square magnitude of the difference between current position and end parameter. 
 			//Square magnitude is used instead of magnitude because it's computationally cheaper.
@@ -118,9 +136,10 @@ namespace Completed
 		{
 			//Hit will store whatever our linecast hits when Move is called.
 			RaycastHit2D hit;
+            bool isPositionTakeOver;
 			
 			//Set canMove to true if Move was successful, false if failed.
-			bool canMove = Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y));
+			bool canMove = Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y), out isPositionTakeOver);
 			
 			//Check if nothing was hit by linecast
 			if(hit.transform == null)
@@ -135,6 +154,9 @@ namespace Completed
 				
 				//Call the OnCantMove function and pass it hitComponent as a parameter.
 				OnCantMove (hitComponent);
+
+            if (isPositionTakeOver)
+                OnTakeOverPosition(hitComponent);
 		}
 		
 		
@@ -142,5 +164,7 @@ namespace Completed
 		//OnCantMove will be overriden by functions in the inheriting classes.
 		protected abstract void OnCantMove <T> (T component)
 			where T : Component;
-	}
+        protected abstract void OnTakeOverPosition<T>(T component)
+            where T : Component;
+    }
 }

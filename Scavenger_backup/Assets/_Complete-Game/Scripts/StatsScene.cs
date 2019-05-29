@@ -41,7 +41,6 @@ public class StatsScene : MonoBehaviour
 
         StartCoroutine("LoadPlayTimeChart");
         StartCoroutine("LoadLevelChart");
-
     }
 
     // Update is called once per frame
