@@ -22,7 +22,9 @@ namespace Completed
 		private int level = 1;									//Current level number, expressed in game as "Day 1".
 		private List<Enemy> enemies;							//List of all Enemy units, used to issue them move commands.
 		private bool enemiesMoving;								//Boolean to check if enemies are moving.
-		private bool doingSetup = true;                         //Boolean to check if we're setting up board, prevent Player from moving during setup.
+		private bool doingSetup = true;
+        //Boolean to check if we're setting up board, prevent Player from moving during setup.
+        private Enemy enemyToRemoveAfterStep = null;
         public bool IsPlaying { get; set; } = false;
 
 
@@ -125,15 +127,15 @@ namespace Completed
             }
             //add lighting after move
             GetBoard().ColorBoard();
-			//Check that playersTurn or enemiesMoving or doingSetup are not currently true.
-			if(playersTurn || enemiesMoving || doingSetup)
+            RemoveEnemyFromList();
+            //Check that playersTurn or enemiesMoving or doingSetup are not currently true.
+            if (playersTurn || enemiesMoving || doingSetup)
 				
 				//If any of these are true, return and do not start MoveEnemies.
 				return;
-			
-			//Start moving enemies.
-			StartCoroutine (MoveEnemies ());
 
+            //Start moving enemies.
+            StartCoroutine(MoveEnemies ());
         }
 		
 		//Call this to add the passed in Enemy to the List of Enemy objects.
@@ -142,10 +144,26 @@ namespace Completed
 			//Add Enemy to List enemies.
 			enemies.Add(script);
 		}
-		
-		
-		//GameOver is called when the player reaches 0 food points
-		public void GameOver()
+
+        private void RemoveEnemyFromList()
+        {
+            if (enemyToRemoveAfterStep != null)
+            {
+                enemies.Remove(enemyToRemoveAfterStep);
+                enemyToRemoveAfterStep.gameObject.SetActive(false);
+                enemyToRemoveAfterStep = null;
+               
+            }
+
+        }
+
+        public void SetEnemyToRemove(Enemy script)
+        {
+            enemyToRemoveAfterStep = script;
+        }
+
+        //GameOver is called when the player reaches 0 food points
+        public void GameOver()
 		{
             //Stop the background music.
             SoundManager.instance.musicSource.Stop();

@@ -75,7 +75,7 @@ namespace Completed
                 tile = board.floorTile;
 
             spriteRenderer = tile.GetComponent<SpriteRenderer>();
-            spriteRenderer.color = Color.black;
+            spriteRenderer.color = Color.white;
 
             instance =
             Instantiate(tile, position, Quaternion.identity) as GameObject;

@@ -87,7 +87,7 @@ namespace Completed
                     turnedRight = false;
 				//Call AttemptMove passing in the generic parameter Wall, since that is what Player may interact with if they encounter one (by attacking it)
 				//Pass in horizontal and vertical as parameters to specify the direction to move Player in.
-				AttemptMove<Wall> (horizontal, vertical);
+				AttemptMove<Enemy> (horizontal, vertical);
 			}
 		}
 		
@@ -104,10 +104,10 @@ namespace Completed
 			
 			//Hit allows us to reference the result of the Linecast done in Move.
 			RaycastHit2D hit;
-
+            bool isPositionTakeOver;
            
             //If Move returns true, meaning Player was able to move into an empty space.
-            if (Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y))) 
+            if (Move (xDir, yDir, out hit, GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y), out isPositionTakeOver)) 
 			{
                 if(turnedRight)
                     animator.SetTrigger("knightWalkRight");
@@ -133,19 +133,25 @@ namespace Completed
         //It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
         protected override void OnCantMove <T> (T component)
 		{
-			//Set hitWall to equal the component passed in as a parameter.
-			Wall hitWall = component as Wall;
+			////Set hitWall to equal the component passed in as a parameter.
+			//Wall hitWall = component as Wall;
 			
-			//Call the DamageWall function of the Wall we are hitting.
-			hitWall.DamageWall (wallDamage);
+			////Call the DamageWall function of the Wall we are hitting.
+			//hitWall.DamageWall (wallDamage);
 			
-			//Set the attack trigger of the player's animation controller in order to play the player's attack animation.
-			animator.SetTrigger ("playerChop");
+			////Set the attack trigger of the player's animation controller in order to play the player's attack animation.
+			//animator.SetTrigger ("playerChop");
 		}
-		
-		
-		//OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
-		private void OnTriggerEnter2D (Collider2D other)
+
+        protected override void OnTakeOverPosition<T>(T component)
+        {
+            Enemy enemy = component as Enemy;
+            GameManager.instance.SetEnemyToRemove(enemy);
+            LoseFood(enemy.playerDamage);
+        }
+
+        //OnTriggerEnter2D is sent when another object enters a trigger collider attached to this object (2D physics only).
+        private void OnTriggerEnter2D (Collider2D other)
 		{
 			//Check if the tag of the trigger collided with is Exit.
 			if(other.tag == "Exit")
@@ -171,6 +177,7 @@ namespace Completed
 				
 				//Disable the food object the player collided with.
 				other.gameObject.SetActive (false);
+                
 			}
 			
 			//Check if the tag of the trigger collided with is Soda.
@@ -204,8 +211,6 @@ namespace Completed
 		//It takes a parameter loss which specifies how many points to lose.
 		public void LoseFood (int loss)
 		{
-			//Set the trigger for the player animator to transition to the playerHit animation.
-			animator.SetTrigger ("playerHit");
 			
 			//Subtract lost food points from the players total.
 			food -= loss;

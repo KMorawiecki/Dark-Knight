@@ -350,11 +350,11 @@ namespace Completed
             switch(thresh)
             {
                 case 0:
-                    if(tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                   if(tiles[tilePosX][tilePosY].GetColor() == Color.black)
                         tiles[tilePosX][tilePosY].SetColor(Color.white);
                     break;
                 case 1:
-                    if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                   if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
                         tiles[tilePosX][tilePosY].SetColor(Color.white);
                     break;
                 case 2:
