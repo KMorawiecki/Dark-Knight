@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,65 +21,64 @@ namespace Completed
             int xDir = 0;
             int yDir = 0;
             bool runFlag = true;
+            bool moveChosen = false;
 
-            //decide which way to go
-            while (runFlag)
-            {
-                xDir = 0;
-                yDir = 0;
+            target = GameObject.FindGameObjectWithTag("Player").transform;
 
-                int selector = Random.Range(0, 2);
-                switch (selector)
+            if (Math.Abs(target.position.x - transform.position.x) <= 1)
+                if (Math.Abs(target.position.y - transform.position.y) <= 1)
                 {
-                    case 0:
-                        xDir = Random.Range(0, 2);
-                        xDir *= 2;
-                        xDir -= 1;
-                        break;
-                    case 1:
-                        yDir = Random.Range(0, 2);
-                        yDir *= 2;
-                        yDir -= 1;
-                        break;
+                    xDir = (int)(target.position.x - transform.position.x);
+                    yDir = (int)(target.position.y - transform.position.y);
+                    moveChosen = true;
                 }
 
-                //zabezpieczenie przed skrajnymi
-                if (transform.position.x == 0 && xDir == -1)
-                    continue;
-                else if (transform.position.x == board.columns - 1 && xDir == 1)
-                    continue;
-                else if (transform.position.y == 0 && yDir == -1)
-                    continue;
-                else if (transform.position.y == board.rows - 1 && yDir == 1)
-                    continue;
+           if(moveChosen == false)
+                while (runFlag)  //decide which way to go
+                {
+                    xDir = 0;
+                    yDir = 0;
 
-                Tile currentTile = board.GetTile((int) transform.position.x, (int) transform.position.y);
+                    int selector = UnityEngine.Random.Range(0, 2);
+                    switch (selector)
+                    {
+                        case 0:
+                            xDir = UnityEngine.Random.Range(0, 2);
+                            xDir *= 2;
+                            xDir -= 1;
+                            break;
+                        case 1:
+                            yDir = UnityEngine.Random.Range(0, 2);
+                            yDir *= 2;
+                            yDir -= 1;
+                            break;
+                    }
 
-                //zabezpieczenie przed wejsciem w sciane
-                if (xDir == -1 && currentTile.left)
-                    continue;
-                else if (xDir == 1 && currentTile.right)
-                    continue;
-                else if (yDir == -1 && currentTile.bottom)
-                    continue;
-                else if (yDir == 1 && currentTile.top)
-                    continue;
+                    //zabezpieczenie przed skrajnymi
+                    if (transform.position.x == 0 && xDir == -1)
+                        continue;
+                    else if (transform.position.x == board.columns - 1 && xDir == 1)
+                        continue;
+                    else if (transform.position.y == 0 && yDir == -1)
+                        continue;
+                    else if (transform.position.y == board.rows - 1 && yDir == 1)
+                        continue;
 
-                runFlag = false;
-            }
+                    Tile currentTile = board.GetTile((int) transform.position.x, (int) transform.position.y);
 
-            ////If the difference in positions is approximately zero (Epsilon) do the following:
-            //if (Mathf.Abs(target.position.x - transform.position.x) < float.Epsilon)
+                    //zabezpieczenie przed wejsciem w sciane
+                    if (xDir == -1 && currentTile.left)
+                        continue;
+                    else if (xDir == 1 && currentTile.right)
+                        continue;
+                    else if (yDir == -1 && currentTile.bottom)
+                        continue;
+                    else if (yDir == 1 && currentTile.top)
+                        continue;
 
-            //    //If the y coordinate of the target's (player) position is greater than the y coordinate of this enemy's position set y direction 1 (to move up). If not, set it to -1 (to move down).
-            //    yDir = target.position.y > transform.position.y ? 1 : -1;
+                    runFlag = false;
+                }
 
-            ////If the difference in positions is not approximately zero (Epsilon) do the following:
-            //else
-            //    //Check if target x position is greater than enemy's x position, if so set x direction to 1 (move right), if not set to -1 (move left).
-            //    xDir = target.position.x > transform.position.x ? 1 : -1;
-
-            //Call the AttemptMove function and pass in the generic parameter Player, because Enemy is moving and expecting to potentially encounter a Player
             AttemptMove<Player>(xDir, yDir);
         }
     }

@@ -57,6 +57,7 @@ namespace Completed
 		private List <Vector3> gridPositions = new List <Vector3> ();	//A list of possible locations to place tiles.
         public List<List<Tile>> tiles = new List<List<Tile>>();
         private GameObject exitInstance;                                //for sprite renderer reasons
+        private Color visitedColor = new Color(0.15f, 0.15f, 0.15f);
 
 
         //Clears our list gridPositions and prepares it to generate a new board.
@@ -312,10 +313,14 @@ namespace Completed
         {
             Transform playerPos = GameObject.FindGameObjectWithTag("Player").transform;
 
-            //first we color everything black
+            //first we color visited tiles black
             for (int row = 0; row < tiles.Count; row++)
                 for (int col = 0; col < tiles[row].Count; col++)
-                   tiles[row][col].SetColor(Color.black);
+                {
+                    if (tiles[row][col].GetColor() != Color.black)
+                        tiles[row][col].SetColor(visitedColor);
+                }
+
 
             //next we add lighting recursively
             AddLighting(0, (int)playerPos.position.x, (int)playerPos.position.y);
@@ -350,15 +355,13 @@ namespace Completed
             switch(thresh)
             {
                 case 0:
-                   if(tiles[tilePosX][tilePosY].GetColor() == Color.black)
-                        tiles[tilePosX][tilePosY].SetColor(Color.white);
+                    tiles[tilePosX][tilePosY].SetColor(Color.white);
                     break;
                 case 1:
-                   if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
-                        tiles[tilePosX][tilePosY].SetColor(Color.white);
+                    tiles[tilePosX][tilePosY].SetColor(Color.white);
                     break;
                 case 2:
-                    if (tiles[tilePosX][tilePosY].GetColor() == Color.black)
+                    if (tiles[tilePosX][tilePosY].GetColor() != Color.white)
                         tiles[tilePosX][tilePosY].SetColor(Color.grey);
                     break;
                 default:
