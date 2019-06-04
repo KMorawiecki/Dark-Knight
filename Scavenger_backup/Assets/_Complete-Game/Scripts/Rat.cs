@@ -78,6 +78,8 @@ namespace Completed
 
                     runFlag = false;
                 }
+            //Debug.Log("x: " + xDir);
+            //Debug.Log("y: " + yDir);
 
             AttemptMove<Player>(xDir, yDir);
         }

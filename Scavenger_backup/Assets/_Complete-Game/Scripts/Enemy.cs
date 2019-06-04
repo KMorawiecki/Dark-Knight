@@ -13,7 +13,9 @@ namespace Completed
 		
 		private Animator animator;							//Variable of type Animator to store a reference to the enemy's Animator component.
 		private bool skipMove;								//Boolean to determine whether or not enemy should skip a turn or move this turn.
-		protected Transform target;                         //Transform to attempt to move toward each turn.
+        private Color visitedColor = new Color(0.15f, 0.15f, 0.15f);
+        private Color invisibility = new Color(0.15f, 0.15f, 0.15f, 0f);
+        protected Transform target;                         //Transform to attempt to move toward each turn.
         protected BoardManager board;
         protected SpriteRenderer spriteRenderer;
 
@@ -33,6 +35,8 @@ namespace Completed
         protected void Update()
         {
             spriteRenderer.color = board.GetTile((int)transform.position.x, (int)transform.position.y).GetColor();
+            if (spriteRenderer.color == visitedColor)
+                spriteRenderer.color = invisibility;
         }
 
         //Override the AttemptMove function of MovingObject to include functionality needed for Enemy to skip turns.
