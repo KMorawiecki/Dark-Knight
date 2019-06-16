@@ -11,6 +11,7 @@ namespace Completed
         public bool left = false;
         public bool right = false;
         public SpriteRenderer spriteRenderer;
+        public bool containItem = false;
 
         private BoardManager board;
         private Vector3 position;
@@ -75,7 +76,7 @@ namespace Completed
                 tile = board.floorTile;
 
             spriteRenderer = tile.GetComponent<SpriteRenderer>();
-            spriteRenderer.color = Color.white;
+            spriteRenderer.color = Color.black;
 
             instance =
             Instantiate(tile, position, Quaternion.identity) as GameObject;

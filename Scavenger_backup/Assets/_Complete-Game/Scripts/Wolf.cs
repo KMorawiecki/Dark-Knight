@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,9 +17,6 @@ namespace Completed
         // Start is called before the first frame update
         protected override void Start()
         {
-            //Find the Player GameObject using it's tag and store a reference to its transform component.
-            target = GameObject.FindGameObjectWithTag("Player").transform;
-
             //Call the start function of our base class MovingObject.
             base.Start();
             SetupParameters();
@@ -30,30 +28,44 @@ namespace Completed
             //These values allow us to choose between the cardinal directions: up, down, left and right.
             int xDir = 0;
             int yDir = 0;
+            bool moveChosen = false; //indicates if we already chose move this turn
 
-            //Debug.Log(correctPath[(int)transform.position.x][(int)transform.position.y]);
+            target = GameObject.FindGameObjectWithTag("Player").transform;
 
-            switch (correctPath[(int)transform.position.x][(int)transform.position.y])
+            if (Math.Abs(target.position.x - transform.position.x) <= 1 && target.position.y == transform.position.y)
             {
-                case Direction.GoLeft:
-                    xDir = -1;
-                    break;
-                case Direction.GoRight:
-                    xDir = 1;
-                    break;
-                case Direction.GoTop:
-                    yDir = 1;
-                    break;
-                case Direction.GoBot:
-                    yDir = -1;
-                    break;
-                case Direction.Finish:
-                    SetupParameters();
-                    break;
-                case Direction.DontGo:
-                    SetupParameters();
-                    break;
-            }         
+                xDir = (int)(target.position.x - transform.position.x);
+                moveChosen = true;
+            }
+
+            if (Math.Abs(target.position.y - transform.position.y) <= 1 && target.position.x == transform.position.x)
+            {
+                yDir = (int)(target.position.y - transform.position.y);
+                moveChosen = true;
+            }
+
+            if (moveChosen == false)
+                switch (correctPath[(int)transform.position.x][(int)transform.position.y])
+                {
+                    case Direction.GoLeft:
+                        xDir = -1;
+                        break;
+                    case Direction.GoRight:
+                        xDir = 1;
+                        break;
+                    case Direction.GoTop:
+                        yDir = 1;
+                        break;
+                    case Direction.GoBot:
+                        yDir = -1;
+                        break;
+                    case Direction.Finish:
+                        SetupParameters();
+                        break;
+                    case Direction.DontGo:
+                        SetupParameters();
+                        break;
+                }         
 
             if (canMove)
                 AttemptMove<Player>(xDir, yDir);
@@ -62,6 +74,8 @@ namespace Completed
 
         public void SetupParameters()
         {
+            target = GameObject.FindGameObjectWithTag("Player").transform;
+
             correctPath.Clear();
             visited.Clear();
 
@@ -122,6 +136,12 @@ namespace Completed
                     return Direction.GoTop;
                 }
             return Direction.DontGo;
+        }
+
+        protected override void OnCantMove<T>(T component)
+        {
+            SetupParameters();
+            base.OnCantMove(component);
         }
 
         public enum Direction

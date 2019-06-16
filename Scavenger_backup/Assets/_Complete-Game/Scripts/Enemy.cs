@@ -12,8 +12,10 @@ namespace Completed
 		
 		
 		private Animator animator;							//Variable of type Animator to store a reference to the enemy's Animator component.
-		private bool skipMove;								//Boolean to determine whether or not enemy should skip a turn or move this turn.
-		protected Transform target;                         //Transform to attempt to move toward each turn.
+		private bool skipMove = false;								//Boolean to determine whether or not enemy should skip a turn or move this turn.
+        private Color visitedColor = new Color(0.15f, 0.15f, 0.15f);
+        private Color invisibility = new Color(0.15f, 0.15f, 0.15f, 0f);
+        protected Transform target;                         //Transform to attempt to move toward each turn.
         protected BoardManager board;
         protected SpriteRenderer spriteRenderer;
 
@@ -33,6 +35,8 @@ namespace Completed
         protected void Update()
         {
             spriteRenderer.color = board.GetTile((int)transform.position.x, (int)transform.position.y).GetColor();
+            if (spriteRenderer.color == visitedColor)
+                spriteRenderer.color = invisibility;
         }
 
         //Override the AttemptMove function of MovingObject to include functionality needed for Enemy to skip turns.
@@ -43,12 +47,14 @@ namespace Completed
 			if(skipMove)
 			{
 				skipMove = false;
-				return;
-				
+				return;			
 			}
 			
 			//Call the AttemptMove function from MovingObject.
 			base.AttemptMove <T> (xDir, yDir);
+
+            if (GameManager.instance.slowedEnemies)
+                skipMove = true;
 		}
 
 
@@ -78,8 +84,7 @@ namespace Completed
             Player player = component as Player;
             GameManager.instance.SetEnemyToRemove(this);
             player.LoseFood(playerDamage);
-            SoundManager.instance.RandomizeSfx(attackSound1, attackSound2);
-            
+            SoundManager.instance.RandomizeSfx(attackSound1, attackSound2);           
         }
     }
 }

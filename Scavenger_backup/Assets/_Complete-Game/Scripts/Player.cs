@@ -2,6 +2,8 @@
 using System.Collections;
 using UnityEngine.UI;	//Allows us to use UI.
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;       //Allows us to use Lists.
+using System;
 
 namespace Completed
 {
@@ -24,13 +26,14 @@ namespace Completed
 		private Animator animator;					//Used to store a reference to the Player's animator component.
 		private int food;                           //Used to store player food points total during level.
         private bool turnedRight;
+        private List<string> itemList = new List<string>();
 #if UNITY_IOS || UNITY_ANDROID || UNITY_WP8 || UNITY_IPHONE
         private Vector2 touchOrigin = -Vector2.one;	//Used to store location of screen touch origin for mobile controls.
 #endif
-		
-		
-		//Start overrides the Start function of MovingObject
-		protected override void Start ()
+
+
+        //Start overrides the Start function of MovingObject
+        protected override void Start ()
 		{
 			//Get a component reference to the Player's animator component
 			animator = GetComponent<Animator>();
@@ -42,7 +45,7 @@ namespace Completed
             turnedRight = true;
 			
 			//Set the foodText to reflect the current player food total.
-			foodText.text = "Food: " + food;
+			foodText.text = "Life points: " + food;
             GameManager.instance.IsPlaying = true;
 			//Call the Start function of the MovingObject base class.
 			base.Start ();
@@ -97,7 +100,7 @@ namespace Completed
 		{
 			
 			//Update food text display to reflect current score.
-			foodText.text = "Food: " + food;
+			foodText.text = "Life points: " + food;
 			
 			//Call the AttemptMove method of the base class, passing in the component T (in this case Wall) and x and y direction to move.
 			base.AttemptMove <T> (xDir, yDir);
@@ -125,9 +128,36 @@ namespace Completed
             else
                 animator.SetTrigger("knightIdleLeft");
 
+            //item check
+            if(GameManager.instance.GetBoard().GetTile((int)transform.position.x, (int)transform.position.y).containItem)
+            {
+                GameManager.instance.GetBoard().DestroyItem();
+                GameObject itm = GameManager.instance.GetBoard().GetItem();
+                Item itmInst = itm.GetComponent<Item>();
+                if (!itemList.Contains(itmInst.name))
+                {
+                    itemList.Add(itmInst.name);
+                    CheckItem(itmInst);
+                }
+            }
+
+
             //Since the player has moved and lost food points, check if the game has ended.
             CheckIfGameOver();
 		}
+
+        private void CheckItem(Item itmInst)
+        {
+            switch (itmInst.name)
+            {
+                case "Boots":
+                    GameManager.instance.slowedEnemies = true;
+                    break;
+                case "Lamp":
+                    GameManager.instance.GetBoard().lampActive = true;
+                    break;
+            }
+        }
 
         //OnCantMove overrides the abstract function OnCantMove in MovingObject.
         //It takes a generic parameter T which in the case of Player is a Wall which the player can attack and destroy.
@@ -170,7 +200,7 @@ namespace Completed
 				food += pointsPerFood;
 				
 				//Update foodText to represent current total and notify player that they gained points
-				foodText.text = "+" + pointsPerFood + " Food: " + food;
+				foodText.text = "+" + pointsPerFood + " Life points: " + food;
 				
 				//Call the RandomizeSfx function of SoundManager and pass in two eating sounds to choose between to play the eating sound effect.
 				SoundManager.instance.RandomizeSfx (eatSound1, eatSound2);
@@ -187,7 +217,7 @@ namespace Completed
 				food += pointsPerSoda;
 				
 				//Update foodText to represent current total and notify player that they gained points
-				foodText.text = "+" + pointsPerSoda + " Food: " + food;
+				foodText.text = "+" + pointsPerSoda + " Life points: " + food;
 				
 				//Call the RandomizeSfx function of SoundManager and pass in two drinking sounds to choose between to play the drinking sound effect.
 				SoundManager.instance.RandomizeSfx (drinkSound1, drinkSound2);
