@@ -25,13 +25,17 @@ namespace Completed
 
             target = GameObject.FindGameObjectWithTag("Player").transform;
 
-            if (Math.Abs(target.position.x - transform.position.x) <= 1)
-                if (Math.Abs(target.position.y - transform.position.y) <= 1)
-                {
-                    xDir = (int)(target.position.x - transform.position.x);
-                    yDir = (int)(target.position.y - transform.position.y);
-                    moveChosen = true;
-                }
+            if (Math.Abs(target.position.x - transform.position.x) <= 1 && target.position.y == transform.position.y)
+            {
+                xDir = (int)(target.position.x - transform.position.x);
+                moveChosen = true;
+            }
+
+            if (Math.Abs(target.position.y - transform.position.y) <= 1 && target.position.x == transform.position.x)
+            {
+                yDir = (int)(target.position.y - transform.position.y);
+                moveChosen = true;
+            }
 
            if(moveChosen == false)
                 while (runFlag)  //decide which way to go

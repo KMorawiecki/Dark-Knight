@@ -11,6 +11,7 @@ namespace Completed
         public bool left = false;
         public bool right = false;
         public SpriteRenderer spriteRenderer;
+        public bool containItem = false;
 
         private BoardManager board;
         private Vector3 position;

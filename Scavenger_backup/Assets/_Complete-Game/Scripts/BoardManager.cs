@@ -43,6 +43,7 @@ namespace Completed
 
         public int columns = 16; 										//Number of columns in our game board.
 		public int rows = 16;											//Number of rows in our game board.
+        public bool lampActive = false;
 		public Count wallCount = new Count (5, 9);						//Lower and upper limit for our random number of walls per level.
 		public Count foodCount = new Count (1, 5);						//Lower and upper limit for our random number of food items per level.
 		public GameObject exit;											//Prefab to spawn for exit.
@@ -51,6 +52,8 @@ namespace Completed
 		public GameObject[] foodTiles;									//Array of food prefabs.
 		public GameObject[] enemyTiles;									//Array of enemy prefabs.
 		public GameObject[] outerWallTiles;                             //Array of outer tile prefabs.
+        public GameObject[] itemList;
+        
 
         private Dictionary<Tuple<int, int>, GameObject> outerWallList = new Dictionary<Tuple<int, int>, GameObject>();
 		private Transform boardHolder;									//A variable to store a reference to the transform of our Board object.
@@ -58,6 +61,8 @@ namespace Completed
         public List<List<Tile>> tiles = new List<List<Tile>>();
         private GameObject exitInstance;                                //for sprite renderer reasons
         private Color visitedColor = new Color(0.15f, 0.15f, 0.15f);
+        private GameObject currentItem;
+        private Tile itemTile;
 
 
         //Clears our list gridPositions and prepares it to generate a new board.
@@ -132,6 +137,19 @@ namespace Completed
                     }
                 }
             }
+
+            //generate item and tile for it
+
+            int randomTileY = Random.Range(0, columns - 1);
+            int randomTileX = Random.Range(0, rows - 1);
+
+            itemTile = tiles[randomTileX][randomTileY];
+            itemTile.containItem = true;
+
+            //GameObject itemInstance = itemList[Random.Range(0, itemList.Length)];
+            currentItem = Instantiate(itemList[Random.Range(0, itemList.Length)], new Vector3(randomTileX, randomTileY, 0f), Quaternion.identity) as GameObject;
+            Item itmInstance = currentItem.GetComponent<Item>();
+            itmInstance.SetTile(GetTile(randomTileX, randomTileY));
         }
 
         //tu dzieje sie magia
@@ -304,6 +322,8 @@ namespace Completed
             //Instantiate a random number of enemies based on minimum and maximum, at randomized positions.
             LayoutObjectAtRandom(enemyTiles, enemyCount, enemyCount);
 
+            //LayoutObjectAtRandom(currentItem, 1, 1);
+
             //Instantiate the exit tile in the upper right hand corner of our game board
             exitInstance = Instantiate (exit, new Vector3 (columns - 1, rows - 1, 0f), Quaternion.identity);
 		}
@@ -329,7 +349,7 @@ namespace Completed
             exitInstance.GetComponent<SpriteRenderer>().color = GetTile(columns - 1, rows - 1).GetColor();
 
             //color outer walls
-            for(int row = 0; row < rows; row++)
+            for (int row = 0; row < rows; row++)
             {
                 Tuple<int, int> newKeyTop = new Tuple<int, int>(row, columns);
                 outerWallList[newKeyTop].GetComponent<SpriteRenderer>().color = GetTile(row, columns - 1).GetColor();
@@ -349,7 +369,7 @@ namespace Completed
 
         private void AddLighting(int thresh, int tilePosX, int tilePosY)
         {
-            if (thresh >= 3)
+            if (thresh >= 4)
                 return;
 
             switch(thresh)
@@ -361,8 +381,20 @@ namespace Completed
                     tiles[tilePosX][tilePosY].SetColor(Color.white);
                     break;
                 case 2:
-                    if (tiles[tilePosX][tilePosY].GetColor() != Color.white)
-                        tiles[tilePosX][tilePosY].SetColor(Color.grey);
+                    if (!lampActive)
+                    {
+                        if (tiles[tilePosX][tilePosY].GetColor() != Color.white)
+                            tiles[tilePosX][tilePosY].SetColor(Color.grey);
+                    }
+                    else
+                        tiles[tilePosX][tilePosY].SetColor(Color.white);
+                    break;
+                case 3:
+                    if (!lampActive)
+                        break;
+                    else
+                        if (tiles[tilePosX][tilePosY].GetColor() != Color.white)
+                            tiles[tilePosX][tilePosY].SetColor(Color.grey);
                     break;
                 default:
                     tiles[tilePosX][tilePosY].SetColor(Color.black);
@@ -387,6 +419,16 @@ namespace Completed
         public Tile GetTile(int x, int y)
         {
             return tiles[x][y];
+        }
+
+        public void DestroyItem()
+        {
+            Destroy(currentItem);
+        }
+
+        public GameObject GetItem()
+        {
+            return currentItem;
         }
     }
 }

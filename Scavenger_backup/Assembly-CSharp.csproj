@@ -66,6 +66,7 @@
     <Compile Include="Assets\_Complete-Game\Scripts\GameInfoDTO.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\GameManager.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\GameOverScene.cs" />
+    <Compile Include="Assets\_Complete-Game\Scripts\Item.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\Loader.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\LoginManager.cs" />
     <Compile Include="Assets\_Complete-Game\Scripts\MovingObject.cs" />
