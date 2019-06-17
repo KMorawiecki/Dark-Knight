@@ -12,6 +12,8 @@ namespace Completed
         private bool canMove = true;
         public GameObject foodToken;
         private GameObject[] foodToDestroy;
+        private bool turnedLeft = true;
+        private Animator animator;
 
 
         // Start is called before the first frame update
@@ -19,6 +21,7 @@ namespace Completed
         {
             //Call the start function of our base class MovingObject.
             base.Start();
+            animator = GetComponent<Animator>();
             SetupParameters();
         }
 
@@ -66,6 +69,26 @@ namespace Completed
                         SetupParameters();
                         break;
                 }         
+
+            switch(xDir)
+            {
+                case -1:
+                    turnedLeft = true;
+                    break;
+                case 1:
+                    turnedLeft = false;
+                    break;
+            }
+
+            switch(turnedLeft)
+            {
+                case true:
+                    animator.SetTrigger("wolfMoveLeftTrigger");
+                    break;
+                case false:
+                    animator.SetTrigger("wolfMoveRightTrigger");
+                    break;
+            }
 
             if (canMove)
                 AttemptMove<Player>(xDir, yDir);

@@ -423,7 +423,7 @@ namespace Completed
 
         public void DestroyItem()
         {
-            Destroy(currentItem);
+            currentItem.SetActive(false);
         }
 
         public GameObject GetItem()
